@@ -1,0 +1,45 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input CreateUserInput {
+  address: String!
+  email: String!
+  name: String!
+  password: String!
+}
+
+type DefaultResponse {
+  message: String!
+}
+
+type Mutation {
+  createUser(createUserInput: CreateUserInput!): User!
+  removeUser(id: String!): User!
+  updateUser(updateUserInput: UpdateUserInput!): User!
+}
+
+type Query {
+  health: DefaultResponse!
+
+  """This will be like getting the user profile by his id"""
+  userById(id: String!): User!
+  users: [User!]!
+}
+
+input UpdateUserInput {
+  _id: String!
+  address: String
+  email: String
+  name: String
+  password: String
+}
+
+type User {
+  _id: String!
+  displayName: String!
+  email: String!
+  googleId: String!
+  name: String!
+  password: String!
+}
