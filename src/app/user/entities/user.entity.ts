@@ -10,11 +10,7 @@ export class User {
 
   @Field(() => String)
   @Prop()
-  googleId: string;
-
-  @Field(() => String)
-  @Prop()
-  name: string;
+  displayName: string;
 
   @Field(() => String)
   @Prop({ unique: true })
@@ -22,20 +18,35 @@ export class User {
 
   @Field(() => String)
   @Prop()
-  displayName: string;
+  picture: string;
 
   @Field(() => String)
   @Prop()
-  password: string;
-}
-
-@ObjectType()
-export class LoginUserResponseR {
-  @Field(() => User)
-  user: User;
+  type: 'oauth' | string;
 
   @Field(() => String)
-  authToken: string;
+  @Prop()
+  provider: 'google' | string;
+
+  @Field(() => String)
+  @Prop()
+  providerAccountId: string;
+
+  @Field(() => String)
+  @Prop()
+  accessToken: string;
+
+  @Field(() => String)
+  @Prop()
+  refreshToken: string;
+
+  @Field(() => String)
+  @Prop()
+  idToken: string;
+
+  @Field(() => Number)
+  @Prop()
+  expiresIn: number;
 }
 
 export type UserDocument = User & Document;

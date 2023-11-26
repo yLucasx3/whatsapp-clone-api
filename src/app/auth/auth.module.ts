@@ -2,14 +2,20 @@ import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserModule } from '../user/user.module';
 import { ConfigModule } from '@nestjs/config';
-import { PassportModule } from '@nestjs/passport';
 import { AuthController } from './auth.controller';
-import { GoogleStrategy } from './utils/google.strategy';
-import { SessionSerializer } from './utils/session.serializer';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './guards';
 
 @Module({
+  imports: [UserModule, ConfigModule],
   controllers: [AuthController],
-  providers: [AuthService, AuthController, GoogleStrategy, SessionSerializer],
-  imports: [UserModule, PassportModule, ConfigModule],
+  providers: [
+    AuthService,
+    AuthController,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AuthModule {}

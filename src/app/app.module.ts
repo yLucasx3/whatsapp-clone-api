@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppService } from './app.service';
 import { Enhancer, GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
@@ -10,6 +9,9 @@ import { CommonModule } from './common/common.module';
 import { AuthModule } from './auth/auth.module';
 import { RootQuery } from 'src/root.query';
 import { PassportModule } from '@nestjs/passport';
+import { JwtModule } from '@nestjs/jwt';
+import { GoogleStrategy } from './auth/strategies/google.strategy';
+import { JwtStrategy } from './auth/strategies/jwt.strategy';
 
 @Module({
   imports: [
@@ -47,11 +49,15 @@ import { PassportModule } from '@nestjs/passport';
         return options;
       },
     }),
+    JwtModule.register({
+      global: true,
+    }),
+    PassportModule.register({ defaultStrategy: 'google', session: true }),
+    AuthModule,
+    PassportModule,
     UserModule,
     CommonModule,
-    AuthModule,
-    PassportModule.register({ session: true }),
   ],
-  providers: [AppService, RootQuery],
+  providers: [RootQuery, GoogleStrategy, JwtStrategy],
 })
 export class AppModule {}

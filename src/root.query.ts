@@ -12,7 +12,7 @@ export class RootQuery {
   @Query(() => DefaultResponse)
   public async health(): Promise<DefaultResponse> {
     return {
-      message: 'Ok',
+      message: 'Okay!',
     };
   }
 }
