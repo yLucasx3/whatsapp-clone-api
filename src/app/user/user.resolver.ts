@@ -19,7 +19,15 @@ export class UserResolver {
   getUserById(
     @Args('id', { type: () => String }) id: MongooSchema.Types.ObjectId,
   ) {
-    return this.userService.getUserById(id);
+    return this.userService.findUserById(id);
+  }
+
+  @Query(() => User, {
+    name: 'userByEmail',
+    description: 'This will be like getting the user profile by his email',
+  })
+  getUserByEmail(@Args('email', { type: () => String }) email: string) {
+    return this.userService.findUserByEmail(email);
   }
 
   @Mutation(() => User)

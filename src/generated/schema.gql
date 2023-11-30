@@ -2,20 +2,56 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Conversation {
+  _id: String!
+  allMessages: [Message!]!
+  lastMessage: Message!
+  messages: [String!]!
+  recipient: User!
+  users: [String!]!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type DefaultResponse {
   message: String!
 }
 
+type Message {
+  _id: String!
+  content: String!
+  conversation: String!
+  createdAt: DateTime!
+  recipient: String!
+  sender: String!
+  status: String!
+  type: String!
+}
+
 type Mutation {
   removeUser(id: String!): User!
+  sendMessage(content: String!, conversation: String!, recipient: String!, sender: String!, status: String!, type: String!): Message!
 }
 
 type Query {
+  allMyConversations: [Conversation!]!
+  conversationById(id: String!): Conversation!
   health: DefaultResponse!
+  messages: [Message!]!
+
+  """This will be like getting the user profile by his email"""
+  userByEmail(email: String!): User!
 
   """This will be like getting the user profile by his id"""
   userById(id: String!): User!
   users: [User!]!
+}
+
+type Subscription {
+  onNewMessageSent: Message!
 }
 
 type User {

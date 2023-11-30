@@ -12,6 +12,28 @@ export class AuthService {
     private userService: UserService,
   ) {}
 
+  async validate(user: LoginUserInput): Promise<{ message: string }> {
+    if (!user) {
+      throw new UnauthorizedException('No user from google');
+    }
+
+    const { email } = user;
+
+    const existingUser = await this.userService.findUserByEmail(email);
+
+    if (!existingUser) {
+      const newUser = await this.userService.createUser({
+        ...user,
+        type: 'oauth',
+        provider: 'google',
+      });
+
+      return { message: `New user created ${newUser.displayName}` };
+    }
+
+    return { message: 'Success' };
+  }
+
   async login(user: LoginUserInput): Promise<{ access_token: string }> {
     if (!user) {
       throw new UnauthorizedException('No user from google');
@@ -19,15 +41,15 @@ export class AuthService {
     const {
       displayName,
       email,
-      expiresIn,
       picture,
+      expiresIn,
       providerAccountId,
       accessToken,
       refreshToken,
       idToken,
     } = user;
 
-    const existingUser = await this.userService.findOneByEmail(email);
+    const existingUser = await this.userService.findUserByEmail(email);
 
     if (!existingUser) {
       const newUser = await this.userService.createUser({

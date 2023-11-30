@@ -1,19 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Schema as MongooSchema } from 'mongoose';
 import { User, UserDocument } from './entities/user.entity';
-import { GoogleCreateUserInput } from './dto/create-user.google.input';
+import { CreateUserInput } from './dto/create-user.google.input';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(User.name)
     private userModel: Model<UserDocument>,
-    private readonly configService: ConfigService,
   ) {}
 
-  async createUser(details: GoogleCreateUserInput) {
+  createUser(details: CreateUserInput) {
     const createdUser = new this.userModel(details);
     return createdUser.save();
   }
@@ -22,11 +20,11 @@ export class UserService {
     return this.userModel.find().skip(skip).limit(limit);
   }
 
-  async findOneByEmail(email: string) {
+  findUserByEmail(email: string) {
     return this.userModel.findOne({ email });
   }
 
-  getUserById(id: MongooSchema.Types.ObjectId) {
+  findUserById(id: MongooSchema.Types.ObjectId) {
     return this.userModel.findOne({ _id: id });
   }
 

@@ -3,7 +3,7 @@ import { Enhancer, GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { MongooseModule, MongooseModuleOptions } from '@nestjs/mongoose';
+import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './user/user.module';
 import { CommonModule } from './common/common.module';
 import { AuthModule } from './auth/auth.module';
@@ -12,13 +12,18 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { GoogleStrategy } from './auth/strategies/google.strategy';
 import { JwtStrategy } from './auth/strategies/jwt.strategy';
+import { ConversationModule } from './conversation/conversation.module';
+import { MessageModule } from './message/message.module';
+import { AppResolver } from './app.resolver';
+import { AppService } from './app.service';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './auth/guards';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ['.env'],
-      cache: true,
     }),
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
@@ -30,9 +35,13 @@ import { JwtStrategy } from './auth/strategies/jwt.strategy';
           sortSchema: true,
           fieldResolverEnhancers: ['interceptors'] as Enhancer[],
           autoTransformHttpErrors: true,
-          context: (context) => context,
+          context: (context: any) => context,
           subscriptions: {
+            'subscriptions-transport-ws': true,
             'graphql-ws': true,
+            onConnect: () => {
+              console.log('connected');
+            },
           },
         };
       },
@@ -42,22 +51,30 @@ import { JwtStrategy } from './auth/strategies/jwt.strategy';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
-        const options: MongooseModuleOptions = {
-          uri: configService.get<string>('DATABASE_URL'),
-        };
-
-        return options;
+        return { uri: configService.get('DATABASE_URL') };
       },
     }),
     JwtModule.register({
       global: true,
     }),
-    PassportModule.register({ defaultStrategy: 'google', session: true }),
     AuthModule,
     PassportModule,
     UserModule,
     CommonModule,
+    MessageModule,
+    ConversationModule,
   ],
-  providers: [RootQuery, GoogleStrategy, JwtStrategy],
+  providers: [
+    AppResolver,
+    AppService,
+    RootQuery,
+    GoogleStrategy,
+    JwtStrategy,
+    MessageModule,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule {}
