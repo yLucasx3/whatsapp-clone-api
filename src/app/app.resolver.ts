@@ -1,7 +1,10 @@
 import { Resolver, Mutation, Args, Subscription } from '@nestjs/graphql';
-import { MessageStatus, MessageType } from './message/dto/create-message.input';
 import { AppService } from './app.service';
-import { Message } from './message/entities/message.entity';
+import {
+  Message,
+  MessageStatus,
+  MessageType,
+} from './message/entities/message.entity';
 import { Public } from 'src/decorators';
 import { PubsubService } from './common/pubsub.service';
 

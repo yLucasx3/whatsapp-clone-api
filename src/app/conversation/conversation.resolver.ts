@@ -46,4 +46,15 @@ export class ConversationResolver {
   lastMessage(@Parent() conversation: Conversation) {
     return this.messageService.findMessageById(conversation.messages.at(-1));
   }
+
+  @ResolveField('unreadMessages', () => [Message] || [])
+  unreadMessages(
+    @Parent() conversation: Conversation,
+    @GraphQLUser() user: string,
+  ) {
+    return this.messageService.findUnreadMessages(
+      String(conversation._id),
+      user,
+    );
+  }
 }

@@ -2,6 +2,11 @@ import { ObjectType, Field } from '@nestjs/graphql';
 import { Document, Schema as MongooSchema } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
+export type MessageType = 'text' | 'audio' | 'video' | 'photo';
+export type MessageStatus = 'sent' | 'unsent' | 'unread' | 'read';
+
+export type MessageStatusEnum = keyof MessageStatus;
+
 @ObjectType()
 @Schema({ timestamps: true })
 export class Message {
@@ -10,7 +15,7 @@ export class Message {
 
   @Field(() => String)
   @Prop()
-  type: 'text' | 'audio' | 'video' | 'photo';
+  type: MessageType;
 
   @Field(() => String)
   @Prop()
@@ -18,7 +23,7 @@ export class Message {
 
   @Field(() => String)
   @Prop()
-  status: 'sent' | 'unsent' | 'unread' | 'read';
+  status: MessageStatus;
 
   @Field(() => String)
   @Prop()

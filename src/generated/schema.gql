@@ -8,6 +8,7 @@ type Conversation {
   lastMessage: Message!
   messages: [String!]!
   recipient: User!
+  unreadMessages: [Message!]!
   users: [String!]!
 }
 
@@ -24,8 +25,10 @@ type Message {
   _id: String!
   content: String!
   conversation: String!
+  conversationDetails: Conversation!
   createdAt: DateTime!
   recipient: String!
+  recipientDetails: User!
   sender: String!
   status: String!
   type: String!
@@ -34,6 +37,8 @@ type Message {
 type Mutation {
   removeUser(id: String!): User!
   sendMessage(content: String!, conversation: String!, recipient: String!, sender: String!, status: String!, type: String!): Message!
+  setMessagesStatus(messages: [String!]!, status: String!): Boolean!
+  singleUpload(file: Upload!): Boolean!
 }
 
 type Query {
@@ -53,6 +58,9 @@ type Query {
 type Subscription {
   onNewMessageSent: Message!
 }
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
 
 type User {
   _id: String!

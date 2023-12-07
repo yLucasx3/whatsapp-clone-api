@@ -1,8 +1,5 @@
 import { InputType, Field } from '@nestjs/graphql';
-
-export type MessageType = 'text' | 'audio' | 'video' | 'photo';
-
-export type MessageStatus = 'sent' | 'unsent' | 'unread' | 'read';
+import { MessageStatus, MessageType } from '../entities/message.entity';
 
 @InputType()
 export class CreateMessageInput {

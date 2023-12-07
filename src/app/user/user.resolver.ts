@@ -2,6 +2,8 @@ import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { User } from './entities/user.entity';
 import { Schema as MongooSchema } from 'mongoose';
+import { GraphQLUpload, FileUpload } from 'graphql-upload-ts';
+import { createWriteStream } from 'fs';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -28,6 +30,21 @@ export class UserResolver {
   })
   getUserByEmail(@Args('email', { type: () => String }) email: string) {
     return this.userService.findUserByEmail(email);
+  }
+
+  @Mutation(() => Boolean)
+  async singleUpload(
+    @Args({ name: 'file', type: () => GraphQLUpload })
+    { createReadStream, filename }: FileUpload,
+  ) {
+    console.log('hello world');
+
+    return new Promise(async (resolve, reject) =>
+      createReadStream()
+        .pipe(createWriteStream(`./uploads/${filename}`))
+        .on('finish', () => resolve(true))
+        .on('error', () => reject(false)),
+    );
   }
 
   @Mutation(() => User)

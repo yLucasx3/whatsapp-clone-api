@@ -1,30 +1,55 @@
 import { InjectModel } from '@nestjs/mongoose';
-import { Message, MessageDocument } from './entities/message.entity';
+import {
+  Message,
+  MessageDocument,
+  MessageStatus,
+} from './entities/message.entity';
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { CreateMessageInput } from './dto/create-message.input';
-import { ConversationDocument } from '../conversation/entities/conversation.entity';
-// import { ConversationService } from '../conversation/conversation.service';
 
 @Injectable()
 export class MessageService {
   constructor(
     @InjectModel(Message.name)
     private messageModel: Model<MessageDocument>,
-    @InjectModel(Message.name)
-    private conversationModel: Model<ConversationDocument>,
   ) {}
 
-  findAll(skip = 0, limit = 10) {
+  findAll(skip = 0, limit = 10): Promise<Message[]> {
     return this.messageModel.find().skip(skip).limit(limit);
   }
 
-  findMessages(ids: string[]) {
+  findMessages(ids: string[]): Promise<Message[]> {
     return this.messageModel.find({ _id: { $in: ids } });
   }
 
-  findMessageById(id: string) {
+  findMessageById(id: string): Promise<Message> {
     return this.messageModel.findOne({ _id: id });
+  }
+
+  async setMessagesStatus(
+    messages: string[],
+    status: string,
+  ): Promise<boolean> {
+    const updatedMessages = await this.messageModel.updateMany(
+      { _id: { $in: messages } },
+      { $set: { status: status } },
+    );
+
+    return !!updatedMessages.modifiedCount;
+  }
+
+  async findUnreadMessages(
+    conversation: string,
+    email: string,
+  ): Promise<Message[]> {
+    const unreadMessages = await this.messageModel.find({
+      status: 'sent',
+      conversation,
+      recipient: email,
+    });
+
+    return unreadMessages;
   }
 
   async createMessage(message: CreateMessageInput) {

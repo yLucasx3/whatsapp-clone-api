@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { HttpGoogleOAuthGuard } from './guards';
-import { HttpUser } from 'src/decorators';
+import { HttpUser, Public } from 'src/decorators';
 import { LoginUserInput } from './dto/login-user.input';
 
 @Controller('auth')
@@ -27,6 +27,7 @@ export class AuthController {
     return this.authService.login(user);
   }
 
+  @Public()
   @Post('validate')
   validate(@Body() user: LoginUserInput) {
     return this.authService.validate(user);
