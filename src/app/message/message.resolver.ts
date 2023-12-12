@@ -7,7 +7,7 @@ import {
   Mutation,
 } from '@nestjs/graphql';
 import { MessageService } from './message.service';
-import { Message, MessageStatus } from './entities/message.entity';
+import { Message } from './entities/message.entity';
 import { User } from '../user/entities/user.entity';
 import { Conversation } from '../conversation/entities/conversation.entity';
 import { ConversationService } from '../conversation/conversation.service';

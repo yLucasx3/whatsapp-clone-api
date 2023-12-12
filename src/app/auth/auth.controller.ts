@@ -23,13 +23,55 @@ export class AuthController {
   @SetMetadata('google-login', true)
   @UseGuards(HttpGoogleOAuthGuard)
   @Get('google-redirect')
-  googleAuthRedirect(@HttpUser() user: LoginUserInput) {
-    return this.authService.login(user);
+  googleAuthRedirect(
+    @HttpUser()
+    {
+      accessToken,
+      displayName,
+      email,
+      expiresIn,
+      idToken,
+      picture,
+      providerAccountId,
+      refreshToken,
+    }: LoginUserInput,
+  ) {
+    return this.authService.login({
+      accessToken,
+      displayName,
+      email,
+      expiresIn,
+      idToken,
+      picture,
+      providerAccountId,
+      refreshToken,
+    });
   }
 
   @Public()
   @Post('validate')
-  validate(@Body() user: LoginUserInput) {
-    return this.authService.validate(user);
+  validate(
+    @Body()
+    {
+      accessToken,
+      displayName,
+      email,
+      expiresIn,
+      idToken,
+      picture,
+      providerAccountId,
+      refreshToken,
+    }: LoginUserInput,
+  ) {
+    return this.authService.validate({
+      accessToken,
+      displayName,
+      email,
+      expiresIn,
+      idToken,
+      picture,
+      providerAccountId,
+      refreshToken,
+    });
   }
 }

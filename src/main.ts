@@ -10,6 +10,7 @@ async function bootstrap() {
     credentials: true,
     origin: '*',
   });
+
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
   app.use(graphqlUploadExpress({ maxFileSize: 1000000, maxFiles: 10 }));

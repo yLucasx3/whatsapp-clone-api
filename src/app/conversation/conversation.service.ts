@@ -6,14 +6,12 @@ import {
   ConversationDocument,
 } from './entities/conversation.entity';
 import { CreateConversationInput } from './dto/create-conversatoin.input';
-import { MessageService } from '../message/message.service';
 
 @Injectable()
 export class ConversationService {
   constructor(
     @InjectModel(Conversation.name)
     private conversationModel: Model<ConversationDocument>,
-    private messageService: MessageService,
   ) {}
 
   findById(id: string): Promise<Conversation> {

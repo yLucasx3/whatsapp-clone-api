@@ -1,8 +1,12 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { LoginUserInput } from './dto/login-user.input';
 import { UserService } from '../user/user.service';
+import {
+  LOGIN_INVALID_PROPS_EXCEPTION,
+  USER_INVALID_PROPS_EXCEPTION,
+} from '../common/exceptions/auth.exceptions';
 
 @Injectable()
 export class AuthService {
@@ -14,16 +18,32 @@ export class AuthService {
 
   async validate(user: LoginUserInput): Promise<{ message: string }> {
     if (!user) {
-      throw new UnauthorizedException('No user from google');
+      throw new BadRequestException(USER_INVALID_PROPS_EXCEPTION);
     }
 
-    const { email } = user;
+    const {
+      accessToken,
+      email,
+      displayName,
+      expiresIn,
+      idToken,
+      picture,
+      providerAccountId,
+      refreshToken,
+    } = user;
 
     const existingUser = await this.userService.findUserByEmail(email);
 
     if (!existingUser) {
       const newUser = await this.userService.createUser({
-        ...user,
+        accessToken,
+        email,
+        displayName,
+        expiresIn,
+        idToken,
+        picture,
+        providerAccountId,
+        refreshToken,
         type: 'oauth',
         provider: 'google',
       });
@@ -31,13 +51,14 @@ export class AuthService {
       return { message: `New user created ${newUser.displayName}` };
     }
 
-    return { message: 'Success' };
+    return { message: 'User validated successfully!' };
   }
 
   async login(user: LoginUserInput): Promise<{ access_token: string }> {
     if (!user) {
-      throw new UnauthorizedException('No user from google');
+      throw new BadRequestException(LOGIN_INVALID_PROPS_EXCEPTION);
     }
+
     const {
       displayName,
       email,
